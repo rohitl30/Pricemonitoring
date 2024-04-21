@@ -127,72 +127,20 @@
             window.location.href = "/logout";
           }
           function searchProduct() {
-            let searchQuery = document.getElementById('search-product').value;
+            let searchTerm = document.getElementById('search-product').value.toLowerCase();
+            let products = document.querySelectorAll('.product');
         
-            // Send search query to the server
-            fetch('/search', {
-                method: 'POST',
-                body: JSON.stringify({ query: searchQuery }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Clear previous search results
-                document.querySelector('.product-list').innerHTML = '';
+            products.forEach(product => {
+              let productName = product.querySelector('.product-info h3').textContent.toLowerCase();
+              let productId = product.querySelector('.product-info h2').textContent.toLowerCase();
         
-                // Display search results
-                if (data.length === 0) {
-                    alert('No products found matching your search.');
-                } else {
-                    data.forEach(product => {
-                        displayProduct(product);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error searching for products:', error);
+              if (productName.includes(searchTerm) || productId.includes(searchTerm)) {
+                product.style.display = 'block'; // Show the matching product
+              } else {
+                product.style.display = 'none'; // Hide non-matching products
+              }
             });
-        }
-        
-        function displayProduct(product) {
-            // Create HTML elements to display the product
-            let productContainer = document.createElement('div');
-            productContainer.classList.add('product');
-        
-            let productImg = document.createElement('div');
-            productImg.classList.add('product-img');
-            let img = document.createElement('img');
-            img.src = 'static/images/' + product.image;
-            img.alt = 'product-image';
-            productImg.appendChild(img);
-        
-            let productInfo = document.createElement('div');
-            productInfo.classList.add('product-info');
-            let productName = document.createElement('h3');
-            productName.textContent = product.name;
-            let productId = document.createElement('h2');
-            productId.textContent = product.id;
-            let reloadIcon = document.createElement('span');
-            reloadIcon.classList.add('glyphicon', 'glyphicon-refresh', 'reload');
-            reloadIcon.setAttribute('onclick', 'reloadPrice()');
-            productId.appendChild(reloadIcon);
-            let priceList = document.createElement('div');
-            priceList.classList.add('price-list');
-            // Add other price information as required
-            // ...
-        
-            productInfo.appendChild(productName);
-            productInfo.appendChild(productId);
-            productInfo.appendChild(priceList);
-        
-            productContainer.appendChild(productImg);
-            productContainer.appendChild(productInfo);
-        
-            // Append the product container to the product list
-            document.querySelector('.product-list').appendChild(productContainer);
-        }
+          }
       </script>
 </body>
 
