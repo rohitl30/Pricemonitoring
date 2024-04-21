@@ -31,7 +31,6 @@ def login():
 def logout():
     return redirect(url_for('index'))
 
-
 @app.route('/monitoring')
 def monitoring():
     products = products_collection.find()
