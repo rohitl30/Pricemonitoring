@@ -11,17 +11,21 @@
 
 <body>
   <div class="header-logo-logout">
-    <img src="static/images/logo.jpeg" alt="Logo" />
+    <img src="static/images/logo.jpeg" alt="Logo" class="logo-img" />
+    <div class="search-input">
+      <input name="search-product" type="text" id="search-product" placeholder="Product ID" />
+      <button class="searchbutton" type="button" onclick="searchProduct()">Search</button>
+  </div>
     <button class="logout" type="button" onclick="logout()"> Logout </button>
   </div>
   <div class="search">
     <p> <a href="index.html">Home</a> / Price Monitoring </p>
     <div class="search-bar">
-        <h3>Search for a product</h3>
+        <!--<h3>Search for a product</h3>
         <div class="search-input">
             <input name="search-product" type="text" id="search-product" placeholder="Product ID" />
             <button class="searchbutton" type="button" onclick="searchProduct()">Search</button>
-        </div>
+        </div>-->
     </div>
 
   </div>
@@ -126,6 +130,24 @@
           function logout(){
             window.location.href = "/logout";
           }
+
+          /* Search JS Akash*/
+          function searchProduct() {
+            let searchTerm = document.getElementById('search-product').value.trim().toLowerCase();
+            let products = document.querySelectorAll('.product');
+        
+            products.forEach(product => {
+              let productName = product.querySelector('.product-info h3').textContent.toLowerCase();
+              let productId = product.querySelector('.product-info h2').textContent.toLowerCase();
+        
+              if (productName.includes(searchTerm) || productId.includes(searchTerm)) {
+                product.style.display = 'block';
+              } else {
+                product.style.display = 'none'; 
+              }
+            });
+          }
+             /* Search JS end*/
       </script>
 </body>
 
