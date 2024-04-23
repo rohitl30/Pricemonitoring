@@ -95,12 +95,27 @@ def get_citybluetechnologies_price():
         return "NaN"
 
 @app.route('/update_price', methods=['POST'])
+# for  updateing we use PUT method 
 def update_price():
     product_id = request.json['product_id']
     new_price = request.json['new_price']
     db.products.update_one({'id': product_id}, {'$set': {'updated_cityblue': new_price}})
     return {"data":"Updated"}
-
-
 if __name__ == '__main__':
     app.run(debug=True)
+
+# search function
+@app.route('/search', methods=['POST'])
+def search_products():
+    search_query = request.json.get('query', '')
+
+    # Query MongoDB to search for products based on the search query
+    results = products_collection.find({"$text": {"$search": search_query}})
+
+    # Convert MongoDB cursor to list of dictionaries
+    products = list(results)
+
+    return jsonify(products)
+
+if __name__ == '__main__':
+    app.run(debug=True)  # Run the Flask app in debug mode
