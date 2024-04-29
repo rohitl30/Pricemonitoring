@@ -10,7 +10,6 @@
 </head>
 
 <body>
-
   <div class="header-logo-logout">
     <img src="static/images/logo.jpeg" alt="Logo" class="logo-img" />
     <div class="search-input">
@@ -19,9 +18,8 @@
   </div>
     <button class="logout" type="button" onclick="logout()"> Logout </button>
   </div>
-  <nav>
   <div class="search">
-    <p class="p-1"> <a href="index.html">Home</a> / Price Monitoring </p>
+    <p> <a href="index.html">Home</a> / Price Monitoring </p>
     <div class="search-bar">
         <!--<h3>Search for a product</h3>
         <div class="search-input">
@@ -29,7 +27,7 @@
             <button class="searchbutton" type="button" onclick="searchProduct()">Search</button>
         </div>-->
     </div>
-  </nav>
+
   </div>
       <main>
         <h1>Price Monitoring System</h1>
@@ -45,6 +43,16 @@
             <div class="ebay">
               <p>Ebay Price</p>
               <p id="ebay-price"></p>
+          </div>
+
+          <div class="officedepot">
+            <p>officedepot Price</p>
+            <p id="officedepot-price"></p>
+          </div>
+          
+          <div class="staples">
+            <p>staples Price</p>
+            <p id="staples-price"></p>
           </div>
             <div class="amazon">
                 <p>Amazon Price</p>
@@ -68,7 +76,94 @@
 
       </main>
       <script>
-        function searchProduct() {
+
+          function get_data(){
+            fetch('/ebay')
+                      .then(response => response.json())
+                      .then(data => {
+                          document.getElementById('ebay-price').textContent = data.ebay_price.substring(3);
+                      })
+                      .catch(error => {
+                          console.error('Error fetching eBay price:', error);
+                      });
+                 /* Scrap JS Harsh*/
+            fetch('/officedepot')
+            .then(response => response.json())
+                      .then(data => {
+                          document.getElementById('officedepot-price').textContent = data.officedepot_price;
+                      })
+                      .catch(error => {
+                          console.error('Error fetching eBay price:', error);
+                      });
+
+                    fetch('/staples')
+          .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('staples-price').textContent = data.staples_price;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching eBay price:', error);
+                    });
+
+                      
+
+            fetch('/amazon')
+                      .then(response => response.json())
+                      .then(data => {
+                          document.getElementById('amazon-price').textContent = data.amazon_price;
+                      })
+                      .catch(error => {
+                          console.error('Error fetching amazon price:', error);
+                      });
+              
+
+            fetch('/cityblue')
+                      .then(response => response.json())
+                      .then(data => {
+                          document.getElementById('cityblue-price').textContent = data.cityblue_price;
+                      })
+                      .catch(error => {
+                          console.error('Error fetching cityblue price:', error);
+                      });
+          };
+          window.onload = function() {
+            document.getElementById('ebay-price').textContent = 'Loading...';
+            document.getElementById('officedepot-price').textContent = 'Loading...';
+            document.getElementById('staples-price').textContent = 'Loading...';
+            document.getElementById('amazon-price').textContent = 'Loading...';
+            document.getElementById('cityblue-price').textContent = 'Loading...';
+
+            get_data()
+          
+              };
+
+            
+        function updatePrice(button) {
+          let productId = button.parentElement.querySelector('.product-id').value;
+          let newPrice = button.parentElement.querySelector('.new-price').value;
+
+          fetch('/update_price', {
+              method: 'POST',
+              body: JSON.stringify({product_id: productId, new_price: newPrice}),
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+            })
+          .then(response => response.json())
+          .then(data => {
+              alert('Price updated successfully')
+              console.log('Price updated successfully');
+          })
+          .catch(error => {
+              console.error('Error updating price:', error);
+          });
+        };
+          function logout(){
+            window.location.href = "/logout";
+          }
+
+          /* Search JS Akash*/
+          function searchProduct() {
             let searchTerm = document.getElementById('search-product').value.trim().toLowerCase();
             let products = document.querySelectorAll('.product');
         
@@ -83,35 +178,7 @@
               }
             });
           }
-
-          function logout(){
-            window.location.href = "/logout";
-          }
-
-          /* Search JS end*/
-          function searchProducts() {
-              let searchQuery = document.getElementById('search-input').value;
-              fetch('/search', {
-                  method: 'POST',
-                  body: JSON.stringify({ query: searchQuery }),
-                  headers: {
-                      'Content-Type': 'application/json'
-                  }
-              })
-              .then(response => response.json())
-              .then(data => {
-                  let searchResults = document.getElementById('search-results');
-                  searchResults.innerHTML = '';
-                  data.forEach(product => {
-                      let li = document.createElement('li');
-                      li.textContent = product.name;
-                      searchResults.appendChild(li);
-                  });
-              })
-              .catch(error => {
-                  console.error('Error searching products:', error);
-              });
-          }
+             /* Search JS end*/
       </script>
 </body>
 
