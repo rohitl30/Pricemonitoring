@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
-import requests
 
 app = Flask(__name__)
 
@@ -56,41 +55,6 @@ def get_ebay_price():
     else:
         return "NaN"
     
-@app.route('/officedepot')
-def get_officedepot_price():
-    url="https://www.officedepot.com/a/products/6478614/Epson-812XL-DuraBrite-High-Yield-Black/"
-    # options = webdriver.ChromeOptions()
-    # options.add_argument('--headless')  
-    # driver = webdriver.Chrome(options=options)
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content , "html.parser")
-
-    price_element = soup.find("span", {"class": "od-graphql-price-big-price"})
-
-    if price_element:
-    
-        return jsonify({'officedepot_price': price_element.text})
-       
-    else:
-        return "NaN"
-    
-@app.route('/staples')
-def get_staples_price():
-    url="https://www.staples.com/epson-t812xl-black-high-yield-ink-cartridge-t812xl120-s/product_24460331"
-    # options = webdriver.ChromeOptions()
-    # options.add_argument('--headless')  
-    # driver = webdriver.Chrome(options=options)
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content , "html.parser")
-
-    price_element = soup.find("div", {"class": "price-info__final_price_sku"})
-    if price_element:
-    
-        return jsonify({'staples_price': price_element.text})
-       
-    else:
-        return "NaN"
-    
 @app.route('/amazon')
 def get_amazon_price():
     url = "https://www.amazon.com/Epson-DURABrite-Ultra-Capacity-Cartridge/dp/B08DX5F6XV"
@@ -131,12 +95,36 @@ def get_citybluetechnologies_price():
         return "NaN"
 
 @app.route('/update_price', methods=['POST'])
+# for  updateing we use PUT method 
 def update_price():
     product_id = request.json['product_id']
     new_price = request.json['new_price']
     db.products.update_one({'id': product_id}, {'$set': {'updated_cityblue': new_price}})
     return {"data":"Updated"}
+if __name__ == '__main__':
+    app.run(debug=True)
 
+# search function
+@app.route('/search', methods=['POST'])
+def search_products():
+    search_query = request.json.get('query', '')
+
+    # Query MongoDB to search for products based on the search query
+    results = products_collection.find({"$text": {"$search": search_query}})
+
+    # Convert MongoDB cursor to list of dictionaries
+    products = list(results)
+
+    return jsonify(products)
+
+if __name__ == '__main__':
+    app.run(debug=True)  # Run the Flask app in debug mode
+    # Route to fetch real-time prices
+@app.route('/prices')
+def get_prices():
+    # Code to fetch real-time prices from the data source
+    prices = {'BTC': 55000, 'ETH': 2000}  # Example data
+    return jsonify(prices)
 
 if __name__ == '__main__':
     app.run(debug=True)
