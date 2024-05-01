@@ -49,6 +49,14 @@
                 <p>CityBlue Price</p>
                 <p id="cityblue-price"></p>
               </div>
+              <div class="officemax">
+                <p>OfficeMax Price</p>
+                <p id="officemax-price"></p>
+              </div>
+              <div class="staples">
+                <p>Staples Price</p>
+                <p id="staples-price"></p>
+              </div>
             <div class="update">
                 <p> Updated CityBlue Price (in $) </p>
                 <input type="hidden" class="product-id" value="{{ product.id }}">
@@ -63,67 +71,92 @@
 
       </main>
       <script>
-        function searchProduct() {
-            let searchTerm = document.getElementById('search-product').value.trim().toLowerCase();
-            let products = document.querySelectorAll('.product');
-        
-            products.forEach(product => {
-              let productName = product.querySelector('.product-info h3').textContent.toLowerCase();
-              let productId = product.querySelector('.product-info h2').textContent.toLowerCase();
-        
-              if (productName.includes(searchTerm) || productId.includes(searchTerm)) {
-                product.style.display = 'block';
-              } else {
-                product.style.display = 'none'; 
-              }
-            });
-          }
 
-          function logout(){
-            window.location.href = "/logout";
-          }
+        function get_data(){
+          fetch('/ebay')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('ebay-price').textContent = data.ebay_price.substring(3);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching eBay price:', error);
+                    });
+            
 
-          /* Search JS end*/
-          function searchProducts() {
-              let searchQuery = document.getElementById('search-input').value;
-              fetch('/search', {
-                  method: 'POST',
-                  body: JSON.stringify({ query: searchQuery }),
-                  headers: {
-                      'Content-Type': 'application/json'
-                  }
-              })
-              .then(response => response.json())
-              .then(data => {
-                  let searchResults = document.getElementById('search-results');
-                  searchResults.innerHTML = '';
-                  data.forEach(product => {
-                      let li = document.createElement('li');
-                      li.textContent = product.name;
-                      searchResults.appendChild(li);
-                  });
-              })
-              .catch(error => {
-                  console.error('Error searching products:', error);
-              });
-          }
-          /*  Add to cart functionality */
-          function fetchPrices() {
-            $.getJSON('/prices', function(data) {
-                // Update the price list on the webpage
-                $('#price-list').empty();
-                $.each(data, function(symbol, price) {
-                    $('#price-list').append('<li>' + symbol + ': $' + price + '</li>');
-                });
-            });
+            fetch('/amazon')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('amazon-price').textContent = data.amazon_price;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching amazon price:', error);
+                    });
+            
+
+            fetch('/cityblue')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('cityblue-price').textContent = data.cityblue_price;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cityblue price:', error);
+                    });
+
+          fetch('/officemax')
+                    .then(response => response.json())
+                              .then(data => {
+                                  document.getElementById('officemax-price').textContent = data.officedepot_price.substring(3);
+                              })
+                              .catch(error => {
+                                  console.error('Error fetching officemax price:', error);
+                              });
+        
+          fetch('/staples')
+                  .then(response => response.json())
+                            .then(data => {
+                                document.getElementById('staples-price').textContent = data.staples_price.substring(3);
+                            })
+                            .catch(error => {
+                                console.error('Error fetching staples price:', error);
+                            });    
+        };
+        window.onload = function() {
+          document.getElementById('ebay-price').textContent = 'Loading...';
+          document.getElementById('amazon-price').textContent = 'Loading...';
+          document.getElementById('cityblue-price').textContent = 'Loading...';
+          document.getElementById('officemax-price').textContent = 'Loading...';
+          document.getElementById('staples-price').textContent = 'Loading...';
+
+
+          get_data()
+        
+            };
+
+          
+      function updatePrice(button) {
+        let productId = button.parentElement.querySelector('.product-id').value;
+        let newPrice = button.parentElement.querySelector('.new-price').value;
+
+        fetch('/update_price', {
+            method: 'POST',
+            body: JSON.stringify({product_id: productId, new_price: newPrice}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+          })
+        .then(response => response.json())
+        .then(data => {
+            alert('Price updated successfully')
+            console.log('Price updated successfully');
+        })
+        .catch(error => {
+            console.error('Error updating price:', error);
+        });
+      };
+        function logout(){
+          window.location.href = "/logout";
         }
-
-        // Fetch prices initially
-        fetchPrices();
-
-        // Fetch prices every 5 seconds (for example)
-        setInterval(fetchPrices, 5000);
-      </script>
+    </script>
 </body>
 
 </html>
