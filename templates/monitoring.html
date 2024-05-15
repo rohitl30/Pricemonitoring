@@ -2,161 +2,219 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Price Monitoring</title>
-  <link href="static/css/style.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Price Monitoring</title>
+    <link href="static/css/style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 
 <body>
 
-  <div class="header-logo-logout">
-    <img src="static/images/logo.jpeg" alt="Logo" class="logo-img" />
-    <div class="search-input">
-      <input name="search-product" type="text" id="search-product" placeholder="Product ID" />
-      <button class="searchbutton" type="button" onclick="searchProduct()">Search</button>
-  </div>
-    <button class="logout" type="button" onclick="logout()"> Logout </button>
-  </div>
-  <nav>
-  <div class="search">
-    <p class="p-1"> <a href="index.html">Home</a> / Price Monitoring </p>
-    <div class="search-bar">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">
+                    <img src="static/images/logo.jpeg" alt="Logo" class="logo-img" />
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar-collapse-1">
+                <form class="navbar-form navbar-right" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search" id="search-product">
+                    </div>
+                    <button type="button" class="btn btn-default" onclick="searchProduct()">Submit</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Admin</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" onclick="logout()">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="line-after-navbar"></div>
+    </nav>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="{{ url_for('monitoring', page=page-1) }}" id="prevPage" style="text-decoration: none;">←</a>
+        {% endif %}
+
+        {% for p in range(1, end_page + 1) %}
+        <a href="{{ url_for('monitoring', page=p) }}" class="page {% if p == page %}active{% endif %}" style="text-decoration: none;">{{ p }}</a>
+        {% endfor %}
+
+        {% if page < total_pages %}
+        <a href="{{ url_for('monitoring', page=page+1) }}" id="nextPage" style="text-decoration: none;">→</a>
+        {% endif %}
     </div>
-  </nav>
-  </div>
-      <main>
+
+    <main>
+      <!-- products list -->
+
         <h1>Price Monitoring System</h1>
         {% for product in products %}
         <div class="product">
-          <div class="product-img">
-            <img src="static/images/{{product.image}}" alt="product-image" />
-        </div>
-        <div class="product-info">
-          <h3> {{product.name}}</h3>
-          <h2> {{product.id}} <span onclick ="reloadPrice()" class="glyphicon glyphicon-refresh reload"></span> </h2>
-          <div class="price-list">
-            <div class="ebay">
-              <p>Ebay Price</p>
-              <p id="ebay-price"></p>
-          </div>
-            <div class="amazon">
-                <p>Amazon Price</p>
-                <p id="amazon-price"></p>
-              </div>
-            <div class="cityblue">
-                <p>CityBlue Price</p>
-                <p id="cityblue-price"></p>
-              </div>
-              <div class="officemax">
-                <p>OfficeMax Price</p>
-                <p id="officemax-price"></p>
-              </div>
-              <div class="staples">
-                <p>Staples Price</p>
-                <p id="staples-price"></p>
-              </div>
-            <div class="update">
-                <p> Updated CityBlue Price (in $) </p>
-                <input type="hidden" class="product-id" value="{{ product.id }}">
-                <input type="text" class="new-price"  placeholder="Enter the new price" />
-            <button class="updatebutton" type="button" onclick="updatePrice(this)"> Update </button>
+            <div class="product-img">
+                <img src="{{product.image}}" alt="product-image" />
+            </div>
+            <div class="product-info">
+                <h3>{{product.name}}</h3>
+                <h2>{{product.id}} <span onclick="reloadPrice('{{product.id}}')" class="glyphicon glyphicon-refresh reload"></span>
+                </h2>
+                <div class="price-list">
+                    <div class="ebay">
+                        <p>Ebay Price</p>
+                        <p class="ebay-price" id="ebay-price-{{product.id}}">Loading...</p>
+                    </div>
+                    <div class="amazon">
+                        <p>Amazon Price</p>
+                        <p class="amazon-price" id="amazon-price-{{product.id}}">Loading...</p>
+                    </div>
+                    <div class="cityblue">
+                        <p>CityBlue Price</p>
+                        <p class="cityblue-price" id="cityblue-price-{{product.id}}">Loading...</p>
+                    </div>
+                    <div class="officemax">
+                        <p>OfficeMax Price</p>
+                        <p class="officemax-price" id="officemax-price-{{product.id}}">Loading...</p>
+                    </div>
+                    <div class="staples">
+                        <p>Staples Price</p>
+                        <p class="staples-price" id="staples-price-{{product.id}}">Loading...</p>
+                    </div>
+                    <div class="update">
+                        <p> Updated CityBlue Price (in $) </p>
+                        <input type="hidden" class="product-id" value="{{ product.id }}">
+                        <input type="text" class="new-price" placeholder="Enter the new price" />
+                        <button class="updatebutton" type="button" onclick="updatePrice(this)"> Update </button>
+                    </div>
+
+                </div>
             </div>
         </div>
-        </div>
-        </div>
         {% endfor %}
+    </main>
+    <script>
+        async function get_data(productId) {
+            document.getElementById(`ebay-price-${productId}`).textContent = 'Loading...';
+            document.getElementById(`amazon-price-${productId}`).textContent = 'Loading...';
+            document.getElementById(`cityblue-price-${productId}`).textContent = 'Loading...';
+            document.getElementById(`officemax-price-${productId}`).textContent = 'Loading...';
+            document.getElementById(`staples-price-${productId}`).textContent = 'Loading...';
 
-
-      </main>
-      <script>
-
-        function get_data(){
-          fetch('/ebay')
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('ebay-price').textContent = data.ebay_price.substring(3);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching eBay price:', error);
-                    });
-            
-
-            fetch('/amazon')
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('amazon-price').textContent = data.amazon_price;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching amazon price:', error);
-                    });
-            
-
-            fetch('/cityblue')
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('cityblue-price').textContent = data.cityblue_price;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching cityblue price:', error);
-                    });
-
-          fetch('/officemax')
-                    .then(response => response.json())
-                              .then(data => {
-                                  document.getElementById('officemax-price').textContent = data.officedepot_price.substring(3);
-                              })
-                              .catch(error => {
-                                  console.error('Error fetching officemax price:', error);
-                              });
-        
-          fetch('/staples')
-                  .then(response => response.json())
-                            .then(data => {
-                                document.getElementById('staples-price').textContent = data.staples_price.substring(3);
-                            })
-                            .catch(error => {
-                                console.error('Error fetching staples price:', error);
-                            });    
-        };
-        window.onload = function() {
-          document.getElementById('ebay-price').textContent = 'Loading...';
-          document.getElementById('amazon-price').textContent = 'Loading...';
-          document.getElementById('cityblue-price').textContent = 'Loading...';
-          document.getElementById('officemax-price').textContent = 'Loading...';
-          document.getElementById('staples-price').textContent = 'Loading...';
-
-
-          get_data()
-        
-            };
-
-          
-      function updatePrice(button) {
-        let productId = button.parentElement.querySelector('.product-id').value;
-        let newPrice = button.parentElement.querySelector('.new-price').value;
-
-        fetch('/update_price', {
-            method: 'POST',
-            body: JSON.stringify({product_id: productId, new_price: newPrice}),
-            headers: {
-                'Content-Type': 'application/json'
+            try {
+                const ebayResponse = await fetch(`/ebay/${productId}`);
+                const ebayData = await ebayResponse.json();
+                document.getElementById(`ebay-price-${productId}`).textContent = ebayData.ebay_price;
+            } catch (error) {
+                console.error('Error fetching eBay price:', error);
             }
-          })
-        .then(response => response.json())
-        .then(data => {
-            alert('Price updated successfully')
-            console.log('Price updated successfully');
-        })
-        .catch(error => {
-            console.error('Error updating price:', error);
-        });
-      };
-        function logout(){
-          window.location.href = "/logout";
+
+            try {
+                const amazonResponse = await fetch(`/amazon/${productId}`);
+                const amazonData = await amazonResponse.json();
+                document.getElementById(`amazon-price-${productId}`).textContent = amazonData.amazon_price;
+            } catch (error) {
+                console.error('Error fetching amazon price:', error);
+            }
+
+            try {
+                const cityblueResponse = await fetch(`/cityblue/${productId}`);
+                const cityblueData = await cityblueResponse.json();
+                document.getElementById(`cityblue-price-${productId}`).textContent = cityblueData.cityblue_price;
+            } catch (error) {
+                console.error('Error fetching cityblue price:', error);
+            }
+
+            try {
+                const officemaxResponse = await fetch(`/officemax/${productId}`);
+                const officemaxData = await officemaxResponse.json();
+                document.getElementById(`officemax-price-${productId}`).textContent = officemaxData.officemax_price;
+            } catch (error) {
+                console.error('Error fetching officemax price:', error);
+            }
+
+            try {
+                const staplesResponse = await fetch(`/staples/${productId}`);
+                const staplesData = await staplesResponse.json();
+                document.getElementById(`staples-price-${productId}`).textContent = staplesData.staples_price;
+            } catch (error) {
+                console.error('Error fetching staples price:', error);
+            }
+        };
+        window.onload = function () {
+            let products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                let productId = product.querySelector('.product-info h2').textContent.trim();
+                get_data(productId);
+            });
+        };
+
+        function updatePrice(button) {
+            let productId = button.parentElement.querySelector('.product-id').value;
+            let newPrice = button.parentElement.querySelector('.new-price').value;
+
+            fetch('/update_price', {
+                method: 'POST',
+                body: JSON.stringify({ product_id: productId, new_price: newPrice }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Price updated successfully')
+                    console.log('Price updated successfully');
+                })
+                .catch(error => {
+                    console.error('Error updating price:', error);
+                });
+        };
+
+        function logout() {
+            window.location.href = "/logout";
         }
+
+        function reloadPrice(productId) {
+            get_data(productId);
+        }
+
+        function searchProduct() {
+            let searchTerm = document.getElementById('search-product').value.trim().toLowerCase();
+            let products = document.querySelectorAll('.product');
+
+            products.forEach(product => {
+                let productName = product.querySelector('.product-info h3').textContent.toLowerCase();
+                let productId = product.querySelector('.product-info h2').textContent.toLowerCase();
+
+                if (productName.includes(searchTerm) || productId.includes(searchTerm)) {
+                    product.style.display = 'block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+
+
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
 
 </html>

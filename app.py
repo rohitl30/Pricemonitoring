@@ -1,18 +1,39 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from selenium import webdriver
+import requests
+from urllib.request import urlopen
+import ssl
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
+from flask_cors import CORS
+import base64
 
 app = Flask(__name__)
+CORS(app)
+
 
 client = MongoClient('mongodb://localhost:27017/')
 db = client['pricemonitoring']
 users_collection = db['users']
 products_collection = db['products']
 
+PER_PAGE = 25
+
 @app.route('/')
 def index():
     return render_template('index.html')
+@app.route('/products')
+def get_products():
+    products = products_collection.find()
+    formatted_products = []
+    for product in products:
+        with open(product['image'], 'rb') as f:
+            image_data = f.read()
+        base64_image = base64.b64encode(image_data).decode('utf-8')
+
+        product['image'] = base64_image
+        formatted_products.append(product)
+
+    return jsonify({'products': formatted_products})
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -31,110 +52,112 @@ def login():
 def logout():
     return redirect(url_for('index'))
 
-
 @app.route('/monitoring')
 def monitoring():
-    products = products_collection.find()
-    print((products))
-    return render_template('monitoring.html',products=products)
-
-@app.route('/ebay')
-def get_ebay_price():
-    url="https://www.ebay.com/itm/256458485567"
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  
-    driver = webdriver.Chrome(options=options)
-
-    driver.get(url)
-    html = driver.page_source
-    driver.quit()  
-    soup = BeautifulSoup(html, 'html.parser')
-
-    price_element = soup.find("div", {"class": "x-price-primary"})
-    if price_element:
-        return jsonify({'ebay_price': price_element.text})
-    else:
-        return "NaN"
+    page = request.args.get('page', default=1, type=int)
+    skip_count = (page - 1) * PER_PAGE
     
-@app.route('/amazon')
-def get_amazon_price():
-    url = "https://www.amazon.com/Epson-DURABrite-Ultra-Capacity-Cartridge/dp/B08DX5F6XV"
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  
-    driver = webdriver.Chrome(options=options)
+    total_products = products_collection.count_documents({})
+    total_pages = ((total_products + PER_PAGE - 1) // PER_PAGE)
+    end_page = min(6, total_pages + 1) 
+    
+    products = products_collection.find().skip(skip_count).limit(PER_PAGE)
+    
+    return render_template('monitoring.html', products=products, page=page, total_pages=total_pages, end_page=end_page)
 
-    driver.get(url)
-    html = driver.page_source
-    driver.quit() 
-    soup = BeautifulSoup(html, 'html.parser')
 
-    price_element = soup.find("span", {"id": "style_name_0_price"})
+@app.route('/ebay/<product_id>')
+def get_ebay_price(product_id):    
+    product = products_collection.find_one({"id": product_id}, {"_id": 0, "Ebay": 1})
+    url = product.get("Ebay","")
+    if url == "Not available":
+        return jsonify({'ebay_price':"NA"})
+    else:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content , "html.parser")
+
+        price_element = soup.find("div", {"class": "x-price-primary"})
+        if price_element:
+            return jsonify({'ebay_price': price_element.get_text().split()[1]})
+        else:
+            return jsonify({'ebay_price':"NaN"})
+    
+@app.route('/amazon/<product_id>')
+def get_amazon_price(product_id):
+    product = products_collection.find_one({"id": product_id}, {"_id": 0, "Amazon": 1})
+    url = product.get("Amazon", "")
+    if url == "Not available":
+        return jsonify({'amazon_price':"NA"})
+
+    # url = "https://www.amazon.com/Epson-DURABrite-Ultra-Capacity-Cartridge/dp/B08DX5F6XV"
+    context = ssl._create_unverified_context()
+    res = urlopen(url,context=context)
+    soup = BeautifulSoup(res, "html.parser")
+
+    price_element = soup.find("span",{'class':'a-offscreen'})
     if price_element:
         price_text = price_element.find("span", {"class": "a-size-mini olpWrapper"}).text.strip()
         amazon_price = price_text.split("from ")[1].split(" ")[0]
-        return jsonify({'amazon_price': amazon_price})
+        return jsonify({'amazon_price': price_element.text})
     else:
-        return "NaN"
-    
-@app.route('/officemax')
-def get_officedepot_price():
-    url="https://www.officedepot.com/a/products/6478614/Epson-812XL-DuraBrite-High-Yield-Black/"
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  
-    driver = webdriver.Chrome(options=options)
+        return jsonify({'amazon_price' : "NaN"})
 
-    driver.get(url)
-    html = driver.page_source
-    driver.quit()  
-    soup = BeautifulSoup(html, 'html.parser')
-
-    price_element = soup.find("span", {"class": "od-graphql-price-big-price"})
-    if price_element:
-    
-        return jsonify({'officemax_price': price_element.text})
-       
+@app.route('/cityblue/<product_id>')
+def get_citybluetechnologies_price(product_id):
+    product = products_collection.find_one({"id": product_id}, {"_id": 0, "CityBlue": 1})
+    product_url = product.get("CityBlue", "")
+    if product_url == "Not available":
+        return jsonify({'cityblue_price':"NA"})
     else:
-        return "NaN"
+
+        # product_url ="https://citybluetechnologies.com/product/t812-exra-high-capacity-black-ink-cartridge-sensormatic/"
+
+        context = ssl._create_unverified_context()
+        res = urlopen(product_url,context=context)
+        soup = BeautifulSoup(res, "html.parser")
+        price = soup.find("bdi")
+        if price:
+            return jsonify({'cityblue_price':price.get_text()})
+        else:
+            return jsonify({'cityblue_price':"NaN"})
     
-@app.route('/staples')
-def get_staples_price():
-    print("hello")
-    url="https://www.staples.com/epson-t812xl-black-high-yield-ink-cartridge-t812xl120-s/product_24460331"
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  
-    driver = webdriver.Chrome(options=options)
+@app.route('/officemax/<product_id>')
+def get_office_max_price(product_id):
+    product = products_collection.find_one({"id": product_id}, {"_id": 0, "OfficeMax": 1})
+    url = product.get("OfficeMax","")  
+    if url == "Not available":
+        return jsonify({'officemax_price':"NA"})
+    else :
+        response = requests.get(url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
 
-    driver.get(url)
-    html = driver.page_source
-    driver.quit()  
-    soup = BeautifulSoup(html, 'html.parser')
+            price_element = soup.find('span', class_='od-graphql-price-big-price')
 
-    price_element = soup.find("div", {"class": "price-info__final_price_sku"})
-    if price_element:
-    
-        return jsonify({'staples_price': price_element.text})
-       
-    else:
-        return "NaN"
+            if price_element:
+                price_text = price_element.text.strip()
+                return jsonify({'officemax_price': price_text})
 
-@app.route('/cityblue')
-def get_citybluetechnologies_price():
-    product_url ="https://citybluetechnologies.com/product/t812-exra-high-capacity-black-ink-cartridge-sensormatic/"
+        return jsonify({'officemax_price':"NaN"})
 
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  
-    driver = webdriver.Chrome(options=options)
+@app.route('/staples/<product_id>')
+def extract_price(product_id):
+    product = products_collection.find_one({"id": product_id}, {"_id": 0, "Staples": 1})
+    url = product.get("Staples","")  
 
-    driver.get(product_url)
-    html = driver.page_source
-    driver.quit()  
-    soup = BeautifulSoup(html, 'html.parser')
+    if url == "Not available":
+        return jsonify({'staples_price':"NA"})
+    response = requests.get(url)
+    if response.status_code == 200: 
+        soup = BeautifulSoup(response.content, 'html.parser')
 
-    price_element = soup.find("span", {"class": "woocommerce-Price-amount amount"})
-    if price_element:
-        return jsonify({'cityblue_price':price_element.text.strip()})
-    else:
-        return "NaN"
+        price_element = soup.find("div", {"class": "price-info__final_price_sku"})
+
+        if price_element:
+            price_text = price_element.text.strip()
+            return jsonify({'staples_price': price_text})
+
+        return jsonify({'staples_price':"NA"})
 
 @app.route('/update_price', methods=['POST'])
 def update_price():
@@ -147,13 +170,9 @@ def update_price():
 @app.route('/search', methods=['POST'])
 def search_products():
     search_query = request.json.get('query', '')
-
     results = products_collection.find({"$text": {"$search": search_query}})
-
     products = list(results)
-
     return jsonify(products)
 
 if __name__ == '__main__':
     app.run(debug=True)  
-    
