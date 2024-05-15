@@ -1,7 +1,7 @@
-/* new  */
+/* CSS Start  */
 @import url('https://fonts.googleapis.com/css?family=Poppins');
 
-/* BASIC */
+/* _____________________________________________________________BASIC__________________________________________________________________________ */
 
 html {
 
@@ -11,6 +11,7 @@ body {
   font-family: "Poppins", sans-serif;
   height: 100vh;
    overflow: hidden;
+   margin: 0%;
 }
 
 a {
@@ -20,17 +21,17 @@ a {
   font-weight: 400;
 }
 
-/* for login logo */
+/* __________________________________________________________for login logo____________________________________________________________________ */
 #icon{
   width: 20%;
 }
 
-/* for header logo */
+/* _________________________________________________________for header logo____________________________________________________________________ */
 .logo-image{
   width: 20%;
 }
 
-/* menu bar */
+/* ___________________________________________________________menu bar_________________________________________________________________________ */
 .menu-bar {
   background-color: #60636d;
   width: 100%;
@@ -46,7 +47,8 @@ h2 {
   margin: 40px 8px 10px 8px; 
   color: #cccccc;
 }
-/* STRUCTURE */
+
+/* _____________________________________________________________STRUCTURE____________________________________________________________________ */
 
 .wrapper {
   display: flex;
@@ -97,7 +99,7 @@ h2.active {
 
 
 
-/* FORM TYPOGRAPHY*/
+/* __________________________________________________________FORM TYPOGRAPHY____________________________________________________________________*/
 
 input[type=button], input[type=submit], input[type=reset]  {
   background-color: #56baed;
@@ -194,7 +196,7 @@ input[type=password]:placeholder {
 }
 
 
-/* Simple CSS3 Fade-in Animation */
+/* ___________________________________________Simple CSS3 Fade-in Animation____________________________________________________________________ */
 .underlineHover:after {
   display: block;
   left: 0;
@@ -215,7 +217,7 @@ input[type=password]:placeholder {
 
 
 
-/* OTHERS */
+/* _______________________________________________________________OTHERS_____________________________________________________________________ */
 
 *:focus {
     outline: none;
@@ -233,4 +235,4 @@ input[type=password]:placeholder {
   color: #ffffff;
   margin-left: 4%;
 }
-
+/* ____________________________________________________End CSS by Akash Gat____________________________________________________________________ */

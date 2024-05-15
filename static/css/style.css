@@ -1,109 +1,15 @@
+/* ____________________________________________________CSS Start_________________________________________________________________  */
 html, body {
   height: 100%;
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+   overflow-x: hidden; 
 }
-
-/* Your existing CSS continues below */
-.header-logo-logout {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1%;
-}
-
 header img {
   height: 5em;
   width: 20em;
 }
 
-nav {
-  background-color: #61636d;
-  height: 5vh;
-  width: 100vw;
-}
-.p-1{
- color: white;
-}
-
-/* main {
-  background-color: #eff0f1;
-  /* height: 80vh; */
-  /* width: 100vw;
-  padding: 1em; */
-/* } */ 
-.logout {
-  height: 2vw;
-  width: 4vw;
-  background: #ccd5e1;
-  font-size: 0.9em;
-  margin-right: 1vw;
-}
-
-.search-input {
-  display: flex;
-  gap: 1em;
-  margin-left: 47%;
-}
-
-#search-product {
-  height: 2em;
-  width: 20vw;
-}
-
-.product {
-  display: flex;
-  gap: 3em;
-  margin-top: 2em;
-}
-
-.product-img img {
-  height: 20vh;
-  width: 8vw;
-  transition: transform 0.3s ease-in-out;
-}
-
-.product-img img:hover {
-  transform: scale(1.05);
-}
-
-.price-list {
-  display: flex;
-  gap: 3em;
-}
-
-.reload {
-  color: blue;
-  font-size: 0.5em;
-}
-
-.reload.reload:hover {
-  transform: scale(1.05);
-}
-
-.searchbutton {
-  height: 2em;
-  width: 6em;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.searchbutton:hover {
-  background-color: #0056b3;
-}
-
-.logoinimg {
-  height: 5em;
-  width: 8em;
-  margin-top: 0.5em;
-}
-
-/* styles.css */
+/* ____________________________________________________nav bar css______________________________________________________________ */
 .login h3 {
   border: 2px solid black;
   width: 5vw;
@@ -113,7 +19,11 @@ nav {
   color: white;
   font-size: 0.8em;
 }
-
+.btn-default:hover {
+  color: white !important;
+  background-color: #007bff !important;
+  border-color: white !important;
+}
 .updatebutton {
   height: 2em;
   width: 6em;
@@ -136,7 +46,483 @@ nav {
 .search-bar {
   margin-left: 73%;
 }
-.logo-img{
-  width: 20%;
+.logo-img {
+  width: 65%;
+}
+.nav>li {
+  position: relative;
+  display: flex;
+  margin-left: 0%;
+}
+.search-input {
+  display: flex;
+  gap: 1em;
+  margin-left: 44%;
+}
+
+
+.btn-default {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+  margin-top: 14% !important;
+}
+.line-after-navbar {
+  height: 25px;
+  background-color: #60636d;
+  margin-top: 1%;
+}
+.dropdown-toggle{
+margin-top: 1% !important;
+}
+.navbar-default {
+  background-color: #f8f8f8;
+  border-color: #e7e7e7;
+  height: 26%;
+}
+.navbar-nav>li {
+  float: left;
+  margin-top: 45%;
+}
+nav {
+  background-color: #61636d;
+  height: 4.5vh;
+  width: 100vw;
+}
+.p-1 {
+  color: white;
+  margin-top: -1%;
+ padding-top: 0.5%;
+ margin-left: 10px;
+}
+/* main {
+  background-color: #eff0f1;
+  /* height: 80vh; */
+  /* width: 100vw;
+  padding: 1em; */
+/* } */ 
+
+/* ____________________________________________________logout and seach CSS_____________________________________________________ */
+.logout {
+  height: 2vw;
+  width: 4vw;
+  background: #ccd5e1;
+  font-size: 0.9em;
+  margin-right: 0vw;
+  margin-left: -8%;
+}
+.header-logo-logout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1%;
+}
+/* _______________________________________________________product CSS_____________________________________________________________ */
+.product {
+  display: inline;
+  gap: 3em;
+  margin-top: 2em;
+  box-shadow: 1521px 6px 4px 3px lightgray;
+}
+.product-img {
+  margin-top: 5%;
+}
+.product::before { 
+  display: flex;
+  gap: 3em;
+  margin-top: 2em;
+}
+.product::after{
+  display: flex;
+  gap: 0em;
+  margin-top: 2em;
 
 }
+.product-info{
+  margin-left: 13%;
+  margin-top: -8%;
+}
+.product-img img {
+  height: 25vh;
+  width: 13vw;
+  transition: transform 0.3s ease-in-out;
+}
+.product-img img:hover {
+  transform: scale(1.05);
+}
+
+.price-list {
+  display: flex;
+  gap: 3em;
+}
+
+.reload {
+  color: blue;
+  font-size: 0.5em;
+}
+
+.reload.reload:hover {
+  transform: scale(1.05);
+}
+#search-product {
+  height: 2em;
+  width: 12vw;
+  margin-top: 21%;
+}
+/* ___________________________________________________search button_______________________________________________ */
+.searchbutton {
+  height: 2em;
+  width: 6em;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  margin-top: 15%;
+}
+
+.searchbutton:hover {
+  background-color: #0056b3;
+}
+
+.logoinimg {
+  height: 5em;
+  width: 8em;
+  margin-top: 0.5em;
+}
+
+
+/* ________________________________________________________pagination CSS____________________________________________________________ */
+.pagination {
+  float: right;
+  text-decoration: none;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none; 
+  transition: background-color .3s;
+  border: 1px solid #ddd;
+}
+.pagination a:not(:last-child) {
+  margin-right: 10px;
+}
+
+.pagination a.active {
+  background-color: #344282;
+  color: white;
+  border: 1px solid #344282;
+  text-decoration: none;
+}
+
+.pagination a:hover:not(.active) {background-color: #ddd;}
+
+
+/* _________________________________________________media query start__________________________________________________________ */
+@media (max-width: 667px){
+  .pagination a.active {
+    background-color: #344282;
+    color: white;
+    border: 1px solid #344282;
+    text-decoration: none;
+    margin-left: 0%;
+}
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin: 20px 0;
+  border-radius: 4px;
+  margin-top: 14%;
+}
+}
+
+/* ___________________________________________________screen size 780px_____________________________________________________________ */
+@media (max-width: 780px){
+.search-bar {
+  margin-left: 73%;
+}
+.logo-img {
+  width: 52%;
+  margin-top: -15%;
+}
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
+  color: #555;
+  background-color: #e7e7e7;
+  width: 40%;
+  height: 0%;
+}
+.nav>li {
+  position: relative;
+  display: flex !important;
+}
+.navbar {
+  position: relative;
+  min-height: 50px;
+  margin-bottom: 40px !important;
+  border: 1px solid transparent;
+}
+.navbar-brand {
+  float: left;
+  height: 28px !important;
+  padding: 15px 15px;
+  font-size: 18px;
+  line-height: 20px;
+}
+.navbar-nav {
+  margin-top: -57%;
+  margin-left: -3%;
+}
+.line-after-navbar {
+  height: 25px;
+  background-color: #60636d;
+  margin-top: -4%;
+}
+.navbar {
+  position: relative;
+  min-height: 50px;
+  margin-bottom: 52px;
+  border: 1px solid transparent;
+}
+.nav>li {
+  position: relative;
+  margin-top: -10%;
+  margin-left: 5%;
+}
+#search-product {
+  height: 2em;
+  width: 46vw;
+  margin-left: 2px;
+  margin-top: -4%;
+}
+.searchbutton {
+  margin-left: 1%;
+}
+.btn-default {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+}
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-left: 53% !important;
+  margin-top: -18% !important; 
+}
+.logout {
+  height: 8vw;
+  width: 15vw;
+  background: #ccd5e1;
+  font-size: 0.9em;
+  margin-right: 0vw;
+  margin-left: -42%;
+  margin-top: 0%;
+  margin-bottom: -93px;
+}
+.p-1 {
+  color: white;
+  margin-top: 4%;
+}
+.product-img img {
+  height: 20vh;
+  width: 27vw;
+  transition: transform 0.3s ease-in-out;
+  margin-left: 31%;
+}
+.product-info {
+  margin-left: 13%;
+  margin-top: -3%;
+}
+.product-img {
+  width: 100%;
+  margin-top: 6%;
+}
+.price-list {
+  display: block;
+  gap: 2em;
+  margin-left: 9%;
+}
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  margin-left: -10%;
+}
+
+input.new-price {
+  width: 83%;
+  margin-top: 4%;
+}
+
+.h1 {
+  font-size: 36px;
+}
+}
+/* _______________________________________________________screen size 768px________________________________________________ */
+@media (min-width: 768px) {
+  .navbar-right .dropdown-menu {
+      right: 78px !important;
+      left: auto;
+      top: 0 !important;
+  }
+}
+
+/* _______________________________________________________screen size 1495 px___________________________________________________ */
+@media(max-width:1495px){
+  .search-bar {
+    margin-left: 73%;
+  }
+  .logo-img {
+    width: 50%;
+    margin-top: -4%;
+}
+  .navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
+    color: #555;
+    background-color: #e7e7e7;
+    width: 40%;
+    height: 0%;
+  }
+  .nav>li {
+    position: relative;
+    display: flex !important;
+  }
+  .navbar {
+    position: relative;
+    min-height: 50px;
+    margin-bottom: 40px !important;
+    border: 1px solid transparent;
+  }
+  .navbar-brand {
+    float: left;
+    height: 28px !important;
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+  }
+  .navbar-nav {
+    margin-top: -57%;
+    margin-left: -3%;
+  }
+  .line-after-navbar {
+    height: 25px;
+    background-color: #60636d;
+    margin-top: -4%;
+  }
+  .navbar {
+    position: relative;
+    min-height: 50px;
+    margin-bottom: 52px;
+    border: 1px solid transparent;
+  }
+  .nav>li {
+    position: relative;
+    margin-top: -10%;
+    margin-left: 5%;
+  }
+  #search-product {
+    height: 2em;
+    width: 46vw;
+    margin-left: 2px;
+    margin-top: -4%;
+  }
+  .searchbutton {
+    margin-left: 1%;
+  }
+  .btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+  }
+  .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-left: 85% !important;
+    margin-top: -13% !important;
+  }
+  .logout {
+    height: 8vw;
+    width: 15vw;
+    background: #ccd5e1;
+    font-size: 0.9em;
+    margin-right: 0vw;
+    margin-left: -42%;
+    margin-top: 0%;
+    margin-bottom: -93px;
+  }
+  .p-1 {
+    color: white;
+    margin-top: 4%;
+  }
+  .product-img img {
+    height: 20vh;
+    width: 27vw;
+    transition: transform 0.3s ease-in-out;
+    margin-left: 31%;
+  }
+  .product-info {
+    margin-left: 13%;
+    margin-top: -3%;
+  }
+  .product-img {
+    width: 100%;
+    margin-top: 6%;
+  }
+  .price-list {
+    display: block;
+    gap: 2em;
+    margin-left: 9%;
+  }
+  button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin-left: -10%;
+  }
+  
+  input.new-price {
+    width: 83%;
+    margin-top: 4%;
+  }
+  
+  .h1 {
+    font-size: 36px;
+  }
+  }
+ /* ____________________________________________________________End CSS By Akash Gat________________________________________________________ */
